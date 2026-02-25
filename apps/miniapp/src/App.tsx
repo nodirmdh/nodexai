@@ -15,9 +15,18 @@ function App() {
   const tg = window.Telegram?.WebApp
 
   if (tg) {
-    console.log("Telegram user:", tg.initDataUnsafe?.user)
+    tg.ready()
+    tg.expand()
+
+    const user = tg.initDataUnsafe?.user
+
+    if (user) {
+      alert("Telegram user: " + JSON.stringify(user))
+    } else {
+      alert("Opened in Telegram, but no user")
+    }
   } else {
-    console.log("Not opened inside Telegram")
+    alert("Not opened inside Telegram")
   }
 }, [])
 
