@@ -44,12 +44,13 @@ function safeEqualHex(a: string, b: string): boolean {
 }
 
 async function hmacSha256(
-  key: Uint8Array,
   message: string,
+  key: Uint8Array | string,
 ): Promise<Uint8Array> {
+  const rawKey = typeof key === 'string' ? encoder.encode(key) : key
   const cryptoKey = await crypto.subtle.importKey(
     'raw',
-    key,
+    rawKey,
     { name: 'HMAC', hash: 'SHA-256' },
     false,
     ['sign'],
@@ -84,8 +85,8 @@ async function verifyTelegramInitData(
   pairs.sort()
 
   const dataCheckString = pairs.join('\n')
-  const secretKey = await hmacSha256(encoder.encode('WebAppData'), botToken)
-  const calculatedHashBytes = await hmacSha256(secretKey, dataCheckString)
+  const secretKey = await hmacSha256(botToken, 'WebAppData')
+  const calculatedHashBytes = await hmacSha256(dataCheckString, secretKey)
   const calculatedHash = bytesToHex(calculatedHashBytes)
 
   if (!safeEqualHex(calculatedHash, providedHash)) {
