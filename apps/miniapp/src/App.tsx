@@ -11,6 +11,17 @@ function App() {
   const [state, setState] = useState<ConnectionState>({ status: 'loading' })
 
   useEffect(() => {
+  // @ts-ignore
+  const tg = window.Telegram?.WebApp
+
+  if (tg) {
+    console.log("Telegram user:", tg.initDataUnsafe?.user)
+  } else {
+    console.log("Not opened inside Telegram")
+  }
+}, [])
+
+  useEffect(() => {
     const loadRestaurants = async () => {
       try {
         const supabase = getSupabaseClient()
