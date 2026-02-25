@@ -11,6 +11,9 @@ type TelegramUser = {
 }
 
 const jsonHeaders = {
+  'access-control-allow-origin': 'https://nodexai-miniapp.vercel.app',
+  'access-control-allow-headers': 'authorization, x-client-info, apikey, content-type',
+  'access-control-allow-methods': 'POST, OPTIONS',
   'content-type': 'application/json; charset=utf-8',
 }
 
@@ -93,6 +96,10 @@ async function verifyTelegramInitData(
 }
 
 Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: jsonHeaders })
+  }
+
   if (req.method !== 'POST') {
     return jsonResponse(405, { error: 'Method not allowed' })
   }
