@@ -11,26 +11,6 @@ function App() {
   const [state, setState] = useState<ConnectionState>({ status: 'loading' })
 
   useEffect(() => {
-  // @ts-ignore
-  const tg = window.Telegram?.WebApp
-
-  if (tg) {
-    tg.ready()
-    tg.expand()
-
-    const user = tg.initDataUnsafe?.user
-
-    if (user) {
-      alert("Telegram user: " + JSON.stringify(user))
-    } else {
-      alert("Opened in Telegram, but no user")
-    }
-  } else {
-    alert("Not opened inside Telegram")
-  }
-}, [])
-
-  useEffect(() => {
     const loadRestaurants = async () => {
       try {
         const supabase = getSupabaseClient()
@@ -55,12 +35,24 @@ function App() {
     void loadRestaurants()
   }, [])
 
+  const telegram = (window as Window & { Telegram?: any }).Telegram
+  const webApp = telegram?.WebApp
+  const debugData = {
+    telegramType: typeof telegram,
+    webAppType: typeof webApp,
+    platform: webApp?.platform ?? null,
+    version: webApp?.version ?? null,
+    initDataLength: webApp?.initData?.length ?? 0,
+    user: JSON.stringify(webApp?.initDataUnsafe?.user ?? null),
+  }
+
   return (
     <Routes>
       <Route
         path="/"
         element={
           <main>
+            <pre>{JSON.stringify(debugData, null, 2)}</pre>
             {state.status === 'loading' && <p>Loading...</p>}
             {state.status === 'error' && <p>{state.message}</p>}
             {state.status === 'success' && (
