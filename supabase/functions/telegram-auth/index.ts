@@ -85,7 +85,7 @@ async function verifyTelegramInitData(
   pairs.sort()
 
   const dataCheckString = pairs.join('\n')
-  const secretKey = await hmacSha256(botToken, 'WebAppData')
+  const secretKey = await hmacSha256('WebAppData', botToken)
   const calculatedHashBytes = await hmacSha256(dataCheckString, secretKey)
   const calculatedHash = bytesToHex(calculatedHashBytes)
 
