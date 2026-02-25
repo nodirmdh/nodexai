@@ -1,19 +1,14 @@
 {
   "name": "ai-studio",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "execa": "^9.6.1",
-    "ollama": "^0.6.3",
-    "simple-git": "^3.32.1",
-    "zod": "^4.3.6"
+    "dev:miniapp": "npm run dev -w @ai-studio/miniapp",
+    "dev:admin": "npm run dev -w @ai-studio/admin",
+    "build": "npm run build -w @ai-studio/miniapp && npm run build -w @ai-studio/admin"
   }
 }
