@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Route, Routes } from 'react-router'
 import { getSupabaseClient } from './lib/supabase'
+import { useAuth } from './context/AuthContext'
 
 type ConnectionState =
   | { status: 'loading' }
@@ -9,6 +10,7 @@ type ConnectionState =
 
 function App() {
   const [state, setState] = useState<ConnectionState>({ status: 'loading' })
+  const { user, loading, error } = useAuth()
 
   useEffect(() => {
     const loadRestaurants = async () => {
@@ -35,16 +37,8 @@ function App() {
     void loadRestaurants()
   }, [])
 
-  const telegram = (window as Window & { Telegram?: any }).Telegram
-  const webApp = telegram?.WebApp
-  const debugData = {
-    telegramType: typeof telegram,
-    webAppType: typeof webApp,
-    platform: webApp?.platform ?? null,
-    version: webApp?.version ?? null,
-    initDataLength: webApp?.initData?.length ?? 0,
-    user: JSON.stringify(webApp?.initDataUnsafe?.user ?? null),
-  }
+  const userName = [user?.first_name, user?.last_name].filter(Boolean).join(' ')
+  const visibleUserName = userName || user?.username || null
 
   return (
     <Routes>
@@ -52,7 +46,13 @@ function App() {
         path="/"
         element={
           <main>
-            <pre>{JSON.stringify(debugData, null, 2)}</pre>
+            <section>
+              {loading && <p>Auth: loading...</p>}
+              {!loading && error && <p>Auth error: {error}</p>}
+              {!loading && !error && user && (
+                <p>Authenticated user: {visibleUserName ?? `id:${user.id}`}</p>
+              )}
+            </section>
             {state.status === 'loading' && <p>Loading...</p>}
             {state.status === 'error' && <p>{state.message}</p>}
             {state.status === 'success' && (
