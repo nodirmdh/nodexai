@@ -70,22 +70,11 @@ export function useTelegramAuth() {
       const telegramUser = webApp.initDataUnsafe?.user
 
       try {
-        const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as
-          | string
-          | undefined
-
-        const headers: Record<string, string> = {
-          'Content-Type': 'application/json',
-        }
-
-        if (anonKey) {
-          headers.apikey = anonKey
-          headers.Authorization = `Bearer ${anonKey}`
-        }
-
         const response = await fetch(TELEGRAM_AUTH_FUNCTION_URL, {
           method: 'POST',
-          headers,
+          headers: {
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({ initData }),
         })
 
